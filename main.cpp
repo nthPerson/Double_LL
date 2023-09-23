@@ -445,8 +445,8 @@ public:
     void createList() {
         Data *d1 = new Data(10, "a");
         Data *d2 = new Data(20, "b");
-        Data *d3 = new Data(30, "c"); // TODO figure out how to initialize these pointer objects in a loop or something
-        Data *d4 = new Data(40, "d"); // TODO These declarations are why subsequent case statements can't be reached
+        Data *d3 = new Data(30, "c");
+        Data *d4 = new Data(40, "d");
         Data *d5 = new Data(50, "e");
         Data *d6 = new Data(60, "f");
         Data *d7 = new Data(70, "g");
