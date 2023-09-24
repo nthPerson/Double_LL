@@ -209,7 +209,7 @@ public:
 
     void deleteAtTail() {
         if (length == 0) {
-            cout << "The list is empty, nothing can be deleted." << endl;
+//            cout << "The list is empty, nothing can be deleted." << endl;
             return;
         }
         // if the list is not empty, create temporary pointer to node that is to be deleted
@@ -217,15 +217,15 @@ public:
         if (length == 1) {
             head = nullptr;
             tail = nullptr;
-            cout << "Success.  Tail node '" << temp->value->name << "' with data value " << temp->value->value
-                 << " was deleted." << endl;
+//            cout << "Success.  Tail node '" << temp->value->name << "' with data value " << temp->value->value
+//                 << " was deleted." << endl;
         } else {
             // update tail pointer to 'delete' tail node
             tail = temp->prev;
             // set the tail's next pointer to nullptr, ending the list
             tail->next = nullptr;
-            cout << "Success.  Tail node '" << temp->value->name << "' with data value " << temp->value->value
-                 << " was deleted." << endl;
+//            cout << "Success.  Tail node '" << temp->value->name << "' with data value " << temp->value->value
+//                 << " was deleted." << endl;
         }
         length--;
         delete temp;
@@ -234,7 +234,7 @@ public:
     void deleteAtIndex(int index) {
         // check if index is within the bounds of the list
         if (index < 0 || index >= length) {
-            cout << "Index is outside the bounds of the list." << endl;
+//            cout << "Index is outside the bounds of the list." << endl;
             return;
         }
         Node<T> *nodeToDelete = get(index);
@@ -248,10 +248,33 @@ public:
             // update nodeToDelete's previous and next pointers, deleting the node at index
             nodeToDelete->prev->next = nodeToDelete->next;
             nodeToDelete->next->prev = nodeToDelete->prev;
-            cout << "Success.  Node '" << nodeToDelete->value->name << "' with data value " << nodeToDelete->value->value << " was deleted.";
+//            cout << "Success.  Node '" << nodeToDelete->value->name << "' with data value " << nodeToDelete->value->value << " was deleted.";
         }
         length--;
         delete nodeToDelete;
+    }
+
+    void deleteList() {
+        Node<T> *current = head;
+
+        while (current != nullptr) {
+
+            if (length == 0) {
+                return;
+            }
+            Node<T> *temp = current;
+            if (length == 1) {
+                head = nullptr;
+                tail = nullptr;
+            } else {
+                current = current->next;
+            }
+            delete temp;
+            --length;
+
+        }
+
+
     }
 
     // sortList helper function
@@ -303,20 +326,130 @@ public:
     }
 
     void removeMultiples() {
-        // make the head node the first multKey to check against other nodes
-        Node<T> *multKey = head;
+        // set the key to the head of the list
+        Node<T> *key = head;
+        // node to traverse the list
+        Node<T> *current;
+        // temporary node to keep track of pointer after node to be deleted so deleteAtIndex can be used
+        Node<T> *nextCurrent;
+        // node to hold the position of the next key in case a multiple is found and deleteAtIndex is called
+        Node<T> *nextKey;
+        // keep track of the index of the key
+        int keyIndex = 0;
+        // keep track of the index of the current node
+        int currentIndex;
+        // keep track of multiples found
+        int multipleCount;
 
-        // iterate multKey over entire list
-        while (multKey != nullptr) {
+        while (key != nullptr) {
+            // this includes the key in the multiple count
+            multipleCount = 1;
+            // set current node to the node after the key
+            current = key->next;
+            // keep track of the index of the current node
+            currentIndex = keyIndex + 1;
 
-            // start each multKey/current comparison with the node after multKey
-            Node<T> *current = multKey->next;
+            while (current != nullptr) {
+                if (key->value->value == current->value->value) {
+                    ++multipleCount;
+                    // keep track of node after current because it would be lost if delete at index was called without it
+                    nextCurrent = current->next;
+                    deleteAtIndex(currentIndex);
+                    // this moves current to the next node
+                    current = nextCurrent;
+                } else {
+                    // if a match was not found, move to the next node
+                    current = current->next;
+                    ++currentIndex;
+                }
 
-            // iterate current over all nodes in list (except for the multKey node)
+            }
+            // save the next key in case a multiple of the key was found, so it can be deleted
+            nextKey = key->next;
+            // if multipleCount is > 1, a multiple was found
+            if (multipleCount > 1) {
+                deleteAtIndex(keyIndex);
+            } else {
+                // if a multiple was not found, the key index will need to be incremented
+                ++keyIndex;
+            }
+            // after checking all the nodes for a multiple of key, move to the next node and repeat
+            key = nextKey;
+        }
+
+//        // make the head node the first multipleKey to check against other nodes
+//        Node<T> *Key = head;
+//        int multipleCount = 0;
+//
+//        // iterate multipleKey over entire list
+//        while (Key != nullptr) {
+//
+//            // start each multipleKey/current comparison with the node after multipleKey
+//            Node<T> *current = Key->next;
+//
+//            // iterate current over all nodes in list (except for the multipleKey node)
+//            while (current != nullptr) {
+//
+//                // check if the values match
+//                if (Key->value->value == current->value->value) {
+//                    ++multipleCount;
+//
+//                    // if the values match, create a temp pointer for the node to be deleted from list
+//                    // this ensures the node to be deleted is kept track of, so it can be deleted successfully
+//                    Node<T> *temp = current;
+//
+//                    if (multipleCount > 0) {
+//                        // If the current pointer is the tail, it will skip this if statement because the tail does not need its prev pointer moved
+//                        // Alternatively, if the current node is not the tail, make the next node point to the previous node
+//                        if (current->next != nullptr) {
+//                            current->next->prev = current->prev;
+//                        }
+//
+//                        // If the current pointer is the head, it will skip this if statement because the head does not need its next pointer moved
+//                        // Alternatively, if the current node is not the head, make the previous node point to the next node
+//                        if (current->prev != nullptr) {
+//                            current->prev->next = current->next;
+//                        }
+//                        --length;
+//                    }
+//                    // move the current pointer to the following node for the next comparison
+//                    current = current->next;
+//
+//                    // Delete the node that had matching data
+//                    delete temp;
+//
+//                    // If the comparison did not find a match, move the current pointer to the following node for the next comparison
+//                } else {
+//                    current = current->next;
+//                }
+//            }
+//            // After comparing each current node to Key, move Key to the next node for the next round of comparisons
+//            Key = Key->next;
+//
+//            // if a multiple of key was found, delete key, which will always be the head node
+//            if (multipleCount > 0) {
+//                deleteAtHead();
+//                multipleCount = 0;
+//            }
+//
+//        }
+    }
+
+    void removeDuplicates() {
+        // make the head node the first duplicateKey to check against other nodes
+        Node<T> *duplicateKey = head;
+
+        // iterate duplicateKey over entire list
+        while (duplicateKey != nullptr) {
+
+            // start each duplicateKey/current comparison with the node after duplicateKey
+            Node<T> *current = duplicateKey->next;
+
+            // iterate current over all nodes in list (except for the duplicateKey node)
             while (current != nullptr) {
 
                 // check if the values match
-                if (multKey->value->value == current->value->value) {
+                if (duplicateKey->value->value == current->value->value) {
 
                     // if the values match, create a temp pointer for the node to be deleted from list
                     // this ensures the node to be deleted is kept track of, so it can be deleted successfully
@@ -343,8 +476,8 @@ public:
                     current = current->next;
                 }
             }
-            // After comparing each current node to multKey, move multkey to the next unique node for the next round of comparisons
-            multKey = multKey->next;
+            // After comparing each current node to duplicateKey, move multkey to the next unique node for the next round of comparisons
+            duplicateKey = duplicateKey->next;
         }
     }
 
@@ -426,20 +559,6 @@ public:
             head = temp->prev;
         }
 
-
-//        Node<T> *previous = nullptr;
-//        Node<T> *current = head;
-//        Node<T> *next;
-//
-//        while (current != nullptr) {
-//            next = current->next;
-//            current->next = previous;
-//            previous = current;
-//
-//            current = next;
-//        }
-//        head = previous;
-
     }
 
     void createList() {
@@ -462,6 +581,8 @@ public:
         ll1->append(d8);
         ll1->printList();
     }
+
+
 
 };
 
@@ -509,6 +630,11 @@ int main() {
                 break;
             case 2:
                 // Delete a list
+
+                ll1->printList();
+//                delete ll1;
+//                ll1->printList();
+//                delete ll1;
                 break;
             case 3:
                 // insert at head
@@ -559,18 +685,25 @@ int main() {
 
 
 
-    //    // creating data object
+        // creating data object
 //    Data *d1 = new Data(10, "a");
 //    Data *d2 = new Data(20, "b");
-//    Data *d3 = new Data(30, "c");
+//    Data *d3 = new Data(10, "c");
 //    Data *d4 = new Data(40, "d");
 //    Data *d5 = new Data(50, "e");
-//    Data *d6 = new Data(50, "f");
+//    Data *d6 = new Data(20, "f");
 //    Data *d7 = new Data(50, "g");
-//    Data *d8 = new Data(80, "h");
+//    Data *d8 = new Data(10, "h");
 //
-//
-//    // Creating Linked List
+//    Data *d9 = new Data(11, "h");
+//    Data *d10 = new Data(12, "h");
+//    Data *d11 = new Data(1, "h");
+//    Data *d12 = new Data(1, "h");
+//    Data *d13 = new Data(15, "h");
+//    Data *d14 = new Data(10, "h");
+
+
+    // Creating Linked List
 //    DoubleLinkedList<Data> *ll1 = new DoubleLinkedList<Data>(d1);
 //    ll1->append(d2);
 //    ll1->append(d3);
@@ -579,6 +712,14 @@ int main() {
 //    ll1->append(d6);
 //    ll1->append(d7);
 //    ll1->append(d8);
+//
+//    ll1->append(d9);
+//    ll1->append(d10);
+//    ll1->append(d11);
+//    ll1->append(d12);
+//    ll1->append(d13);
+//    ll1->append(d14);
+//
 //    ll1->printList();
 
     // testing evenOddSplit
@@ -601,12 +742,16 @@ int main() {
 //    ll1->getHead();
 //    ll1->getTail();
 
+    // testing removeDuplicates
+//    ll1->removeDuplicates();
+//    ll1->printList();
+
     // testing removeMultiples
 //    ll1->removeMultiples();
 //    ll1->printList();
 
-    // testing JakeRemoveMultiples
-//    ll1->JakeRemoveMultiples();
+    // testing removeMultiplesUsingIndex
+//    ll1->removeMultiplesUsingIndex();
 //    ll1->printList();
 
     // testing countMultiples
