@@ -39,6 +39,7 @@ public:
     void print() {
 //      cout << "contents of list:" << endl;
         value->print();
+        cout << endl;
     }
 };
 
@@ -49,14 +50,15 @@ private:
     Node<T> *head;
     Node<T> *tail;
     int length;
+//    string listName;
 
 public:
     // No-arg constructor
-//    DoubleLinkedList() {
-//        head = nullptr;
-//        tail = nullptr;
-//        length = 0;
-//    }
+    DoubleLinkedList() {
+        head = nullptr;
+        tail = nullptr;
+        length = 0;
+    }
 
     // Constructor
     DoubleLinkedList(T *value) {
@@ -325,6 +327,7 @@ public:
 
     }
 
+    // big-O O(n^2) due to nested while loops
     void removeMultiples() {
         // set the key to the head of the list
         Node<T> *key = head;
@@ -350,7 +353,7 @@ public:
             currentIndex = keyIndex + 1;
 
             while (current != nullptr) {
-                if (key->value->value == current->value->value) {
+                if ((key->value->value == current->value->value) || (key->value->name == current->value->name)) {
                     ++multipleCount;
                     // keep track of node after current because it would be lost if delete at index was called without it
                     nextCurrent = current->next;
@@ -491,17 +494,11 @@ public:
     int countMultiples(T *value) {
         Node<T> *current = head;
         Data *userVal = value;
-//        int userVal = value->value;
         int count = 0;
 
         while (current != nullptr) {
 
-//            if (compareData(userVal, current->value)) {
-//
-//            }
-
-
-            if (current->value->value == userVal->value) {
+            if (current->value->value == userVal->value || current->value->name == userVal->name) {
                 ++count;
             }
             current = current->next;
@@ -510,8 +507,8 @@ public:
     }
 
     void evenOddSplit() {
-        DoubleLinkedList<T> evenList;
-        DoubleLinkedList<T> oddList;
+        DoubleLinkedList<T> *evenList = new DoubleLinkedList<Data>();
+        DoubleLinkedList<T> *oddList = new DoubleLinkedList<Data>();
         Node<T> *current = head;
         // for safe deletion of nodes
         Node<T> *temp;
@@ -523,25 +520,25 @@ public:
             temp = current;
             // if index is even, add to evenList
             if (index % 2 == 0) {
-                evenList.append(current->value);
+                evenList->append(current->value);
                 ++index;
 
                 // if index is odd, add to oddList
             } else {
-                oddList.append(current->value);
+                oddList->append(current->value);
                 ++index;
             }
             // move current to next node
             current = current->next;
             delete temp;
         }
-        evenList.printList();
-        oddList.printList();
+        evenList->printList();
+        oddList->printList();
 
         // deleting the original list must happen in the main function, but list resources can be reset here
-        head = nullptr;
-        tail = nullptr;
-        length = 0;
+//        head = nullptr;
+//        tail = nullptr;
+//        length = 0;
     }
 
     void reverseList() {
@@ -589,24 +586,48 @@ public:
 // Main Program
 
 int main() {
+    // for menu functions
     string input;
     int userChoice = 0;
+
+    // create list
     DoubleLinkedList<Data> *ll1;
 
+    // for create list
+    char keepAdding;
 
-    cout << "Hello!  Welcome to the Doubly-Linked List Program!" << endl;
-    cout << "To start, enter any letter.  To quit at any time, enter the letter 'q'." << endl;
-    cin >> input;
+    // for insert functions
+    Data *newData;
+    Node<Data> *newNode;
+    string name;
+    int value;
+    int index;
 
-    if (input != "q") {
-        cout << "This is the Main Menu:" << endl;
-    } else {
-        cout << "Goodbye!" << endl;
-    }
-    while (input != "q") {
+    // for multiple count
+    int multipleCount;
+
+
+    cout << "\nHello!  Welcome to the Doubly-Linked List Program!\n" << endl;
+    cout << "This program was written by Robert Ashe in CS210: Data Stuctures,\nunder the instruction of Professor Fnu Manju Muralidharan Priya." << endl;
+    cout << "\nTo start, enter a positive number: " << endl;
+//    cout << "\nTo start, enter any letter: " << endl;
+//    cout << "To start, enter any letter.  To quit at any time, enter a negative number." << endl;
+    cin >> userChoice;
+//    cin >> input;
+
+//    if (input != "q") {
+//        cout << "This is the Main Menu:" << endl;
+//    } else {
+//        cout << "Goodbye!" << endl;
+//    }
+
+    // changed condition from (input != "q") to try new menu operation
+    while (userChoice > 0) {
         // main menu
 
-        cout << "Choose any of the options by entering the number next to it: " << endl;
+        cout << "Choose any of the options by entering the number next to it: \n" << endl;
+//        cin >> userChoice;
+
         cout << "1: Create new list." << endl;
         cout << "2: Delete a list" << endl;
         cout << "3: Insert a new entry at the beginning of the list." << endl;
@@ -619,69 +640,160 @@ int main() {
         cout << "10: Sort the list in ascending order." << endl;
         cout << "11: Count the number of entries that match a number you provide." << endl;
         cout << "12: Delete entries that have matching data." << endl;
-        cout << "13: Split the list by even and odd indices." << endl;
-        cout << "Enter the letter 'q' to quit." << endl;
+        cout << "13: Split the list by even and odd indices. Also quits program." << endl;
+        cout << "14: Quit." << endl;
+//        cout << "Enter the letter 'q' to quit." << endl;
 
         cin >> userChoice;
 
-        switch (userChoice) {
-            case 1: // Create new list
-                ll1->createList();
-                break;
-            case 2:
-                // Delete a list
 
-                ll1->printList();
-//                delete ll1;
-//                ll1->printList();
-//                delete ll1;
-                break;
-            case 3:
-                // insert at head
-                break;
-            case 4:
-                // insert at tail
-                break;
-            case 5:
-                // insert at index
-                break;
-            case 6:
-                // delete at head
-                break;
-            case 7:
-                // delete at tail
-                break;
-            case 8:
-                // delete at index
-                break;
-            case 9:
-                // reverse list
-                break;
-            case 10:
-                // sort list
-                break;
-            case 11:
-                // count multiples, need to create a data object with user input to pass to function
-                break;
-            case 12:
-                // delete multiples
-                break;
-            case 13:
-                // split list
-                break;
+        if (userChoice > 0) {
+            switch (userChoice) {
+                case 1: // Create new list
+                    cout << "Enter the name of the first entry: " << endl;
+                    cin >> name;
+                    cout << "Enter the value of the first entry: " << endl;
+                    cin >> value;
 
+                    newData = new Data(value, name);
+                    ll1 = new DoubleLinkedList<Data>(newData);
+
+                    keepAdding = 'y';
+                    while (keepAdding == 'y' || keepAdding == 'Y') {
+                        cout << "Add another node? y/n: " << endl;
+                        cin >> keepAdding;
+
+                        if (keepAdding == 'y' || keepAdding == 'Y') {
+                            cout << "Enter name of node: " << endl;
+                            cin >> name;
+                            cout << "Enter value: " << endl;
+                            cin >> value;
+
+                            newData = new Data(value, name);
+                            ll1->append(newData);
+                        }
+
+                    }
+                    ll1->printList();
+                    break;
+                case 2:
+                    // Delete a list
+                    ll1->deleteList();
+
+                    break;
+                case 3:
+                    // insert at head
+                    cout << "Enter the name of the node you wish to insert: " << endl;
+                    cin >> name;
+                    cout << "Enter an integer value for the node: " << endl;
+                    cin >> value;
+
+                    newData = new Data(value, name);
+                    ll1->prepend(newData);
+                    ll1->printList();
+                    break;
+                case 4:
+                    // insert at tail
+                    cout << "Enter the name of the node you wish to insert: " << endl;
+                    cin >> name;
+                    cout << "Enter an integer value for the node: " << endl;
+                    cin >> value;
+
+                    newData = new Data(value, name);
+                    ll1->append(newData);
+                    ll1->printList();
+                    break;
+                case 5:
+                    // insert at index
+                    cout << "Enter the name of the node you wish to insert: " << endl;
+                    cin >> name;
+                    cout << "Enter an integer value for the node: " << endl;
+                    cin >> value;
+                    cout << "Enter the index where you want the node inserted.  Node indices start at 0: " << endl;
+                    cin >> index;
+
+                    newData = new Data(value, name);
+                    ll1->insert(index, newData);
+                    ll1->printList();
+                    break;
+                case 6:
+                    // delete at head
+                    ll1->deleteAtHead();
+                    ll1->printList();
+                    break;
+                case 7:
+                    // delete at tail
+                    ll1->deleteAtTail();
+                    ll1->printList();
+                    break;
+                case 8:
+                    // delete at index
+                    cout << "Enter the index of the entry you with to delete: " << endl;
+                    cin >> index;
+
+                    ll1->deleteAtIndex(index);
+                    ll1->printList();
+                    break;
+                case 9:
+                    // reverse list
+                    ll1->reverseList();
+                    ll1->printList();
+                    break;
+                case 10:
+                    // sort list
+                    ll1->sortList();
+                    ll1->printList();
+                    break;
+                case 11:
+                    // count multiples, need to create a data object with user input to pass to function
+                    cout << "Enter the name of the entry you wish to find the number of multiples for: " << endl;
+                    cin >> name;
+                    cout << "Enter the value of the entry: " << endl;
+                    cin >> value;
+
+                    newData = new Data(value, name);
+                    multipleCount = ll1->countMultiples(newData);
+                    if (multipleCount == 1) {
+                        cout << "There was " << multipleCount << " multiple of the entry you provided." << endl;
+                    } else {
+                        cout << "There were " << multipleCount << " multiples of the entry you provided." << endl;
+                    }
+                    ll1->printList();
+
+                    break;
+                case 12:
+                    // delete multiples
+                    ll1->removeMultiples();
+                    ll1->printList();
+                    break;
+                case 13:
+                    // split list and end the program
+                    ll1->evenOddSplit();
+                    ll1->deleteList();
+
+                    // this ends the program
+                    userChoice = -1;
+                    break;
+                case 14:
+                    cout << "Have a great day!" << endl;
+                    userChoice = -1;
+                default:
+                    cout << "Invalid choice, please enter a number from 1 to 13." << endl;
+
+            }
         }
 
 
-//        cin >> input;
+
+
+
+    }
+    //        cin >> input;
 //        if (input != "q") {
 //            cout << "Main Menu:" << endl;
 //        } else {
 //            cout << "Goodbye!" << endl;
 //        }
-
-    }
-    
 
 
 
