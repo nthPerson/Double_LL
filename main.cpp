@@ -39,7 +39,7 @@ public:
     void print() {
 //      cout << "contents of list:" << endl;
         value->print();
-        cout << endl;
+//        cout << endl;
     }
 };
 
@@ -197,14 +197,15 @@ public:
         if (length == 1) {
             head = nullptr;
             tail = nullptr;
-            cout << "Success.  Head node '" << temp->value->name << "' with data value " << temp->value->value
-                 << " was deleted." << endl;
+
         } else {
             // update head reference to 'delete' head node
             head = head->next;
-            cout << "Success.  Head node '" << temp->value->name << "' with data value " << temp->value->value
-                 << " was deleted." << endl;
+            head->prev = nullptr;
+
         }
+        cout << "Success.  Head node '" << temp->value->name << "' with data value " << temp->value->value
+             << " was deleted." << endl;
         delete temp;
         length--;
     }
@@ -498,7 +499,8 @@ public:
 
         while (current != nullptr) {
 
-            if (current->value->value == userVal->value || current->value->name == userVal->name) {
+
+            if (current->value->value == userVal->value) { // removed  '|| current->value->name == userVal->name' from the comparison because only the multiples of the value are counted
                 ++count;
             }
             current = current->next;
@@ -608,7 +610,7 @@ int main() {
 
 
     cout << "\nHello!  Welcome to the Doubly-Linked List Program!\n" << endl;
-    cout << "This program was written by Robert Ashe in CS210: Data Stuctures,\nunder the instruction of Professor Fnu Manju Muralidharan Priya." << endl;
+    cout << "This program was written by Robert Ashe in CS210: Data Stuctures,\nunder the instruction of Professor Manju Muralidharan." << endl;
     cout << "\nTo start, enter a positive number: " << endl;
 //    cout << "\nTo start, enter any letter: " << endl;
 //    cout << "To start, enter any letter.  To quit at any time, enter a negative number." << endl;
@@ -628,19 +630,19 @@ int main() {
         cout << "Choose any of the options by entering the number next to it: \n" << endl;
 //        cin >> userChoice;
 
-        cout << "1: Create new list." << endl;
+        cout << "1: Create a list." << endl;
         cout << "2: Delete a list" << endl;
-        cout << "3: Insert a new entry at the beginning of the list." << endl;
-        cout << "4: Insert a new entry at the end of the list." << endl;
-        cout << "5: Insert a new entry at the index you provide." << endl;
-        cout << "6: Delete entry at beginning of list." << endl;
-        cout << "7: Delete entry at end of list." << endl;
-        cout << "8: Delete entry at the index you provide." << endl;
-        cout << "9: Reverse the list." << endl;
-        cout << "10: Sort the list in ascending order." << endl;
-        cout << "11: Count the number of entries that match a number you provide." << endl;
-        cout << "12: Delete entries that have matching data." << endl;
-        cout << "13: Split the list by even and odd indices. Also quits program." << endl;
+        cout << "3: Insert a new entry at the beginning of the list. (Insert at Head)" << endl;
+        cout << "4: Insert a new entry at the end of the list. (Insert at Tail)" << endl;
+        cout << "5: Insert a new entry at the index you provide. (Insert at Index)" << endl;
+        cout << "6: Delete entry at beginning of list. (Delete at Head)" << endl;
+        cout << "7: Delete entry at end of list. (Delete at Tail)" << endl;
+        cout << "8: Delete entry at the index you provide. (Delete at Index)" << endl;
+        cout << "9: Reverse the list. (Reverse List)" << endl;
+        cout << "10: Sort the list in ascending order. (Sort List)" << endl;
+        cout << "11: Count the number of entries that match a number you provide. (Count Multiples)" << endl;
+        cout << "12: Delete entries that have matching data. (Delete Multiples)" << endl;
+        cout << "13: Split the list by even and odd indices. Also quits program. (Split List)" << endl;
         cout << "14: Quit." << endl;
 //        cout << "Enter the letter 'q' to quit." << endl;
 
@@ -650,9 +652,13 @@ int main() {
         if (userChoice > 0) {
             switch (userChoice) {
                 case 1: // Create new list
-                    cout << "Enter the name of the first entry: " << endl;
+//                    cout << "Enter the name of the first entry: " << endl;
+//                    cin >> name;
+//                    cout << "Enter the value of the first entry: " << endl;
+//                    cin >> value;
+
+                    cout << "Enter the name and value of the first node, separated by a space: " << endl;
                     cin >> name;
-                    cout << "Enter the value of the first entry: " << endl;
                     cin >> value;
 
                     newData = new Data(value, name);
@@ -664,9 +670,13 @@ int main() {
                         cin >> keepAdding;
 
                         if (keepAdding == 'y' || keepAdding == 'Y') {
-                            cout << "Enter name of node: " << endl;
+//                            cout << "Enter name of node: " << endl;
+//                            cin >> name;
+//                            cout << "Enter value: " << endl;
+//                            cin >> value;
+
+                            cout << "Enter the name and value of the next node you want to add: " << endl;
                             cin >> name;
-                            cout << "Enter value: " << endl;
                             cin >> value;
 
                             newData = new Data(value, name);
@@ -675,6 +685,7 @@ int main() {
 
                     }
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 2:
                     // Delete a list
@@ -683,31 +694,47 @@ int main() {
                     break;
                 case 3:
                     // insert at head
-                    cout << "Enter the name of the node you wish to insert: " << endl;
+//                    cout << "Enter the name of the node you wish to insert: " << endl;
+//                    cin >> name;
+//                    cout << "Enter an integer value for the node: " << endl;
+//                    cin >> value;
+//
+                    cout << "Enter the name and value of the node you wish to insert, separated by a space: " << endl;
                     cin >> name;
-                    cout << "Enter an integer value for the node: " << endl;
                     cin >> value;
 
                     newData = new Data(value, name);
                     ll1->prepend(newData);
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 4:
                     // insert at tail
-                    cout << "Enter the name of the node you wish to insert: " << endl;
+//                    cout << "Enter the name of the node you wish to insert: " << endl;
+//                    cin >> name;
+//                    cout << "Enter an integer value for the node: " << endl;
+//                    cin >> value;
+
+                    cout << "Enter the name and value of the node you wish to insert, separated by a space: " << endl;
                     cin >> name;
-                    cout << "Enter an integer value for the node: " << endl;
                     cin >> value;
 
                     newData = new Data(value, name);
                     ll1->append(newData);
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 5:
                     // insert at index
-                    cout << "Enter the name of the node you wish to insert: " << endl;
+//                    cout << "Enter the name of the node you wish to insert: " << endl;
+//                    cin >> name;
+//                    cout << "Enter an integer value for the node: " << endl;
+//                    cin >> value;
+//                    cout << "Enter the index where you want the node inserted.  Node indices start at 0: " << endl;
+//                    cin >> index;
+
+                    cout << "Enter the name and value of the node you wish to insert, separated by a space: " << endl;
                     cin >> name;
-                    cout << "Enter an integer value for the node: " << endl;
                     cin >> value;
                     cout << "Enter the index where you want the node inserted.  Node indices start at 0: " << endl;
                     cin >> index;
@@ -715,16 +742,19 @@ int main() {
                     newData = new Data(value, name);
                     ll1->insert(index, newData);
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 6:
                     // delete at head
                     ll1->deleteAtHead();
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 7:
                     // delete at tail
                     ll1->deleteAtTail();
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 8:
                     // delete at index
@@ -733,22 +763,26 @@ int main() {
 
                     ll1->deleteAtIndex(index);
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 9:
                     // reverse list
                     ll1->reverseList();
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 10:
                     // sort list
                     ll1->sortList();
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 11:
-                    // count multiples, need to create a data object with user input to pass to function
-                    cout << "Enter the name of the entry you wish to find the number of multiples for: " << endl;
-                    cin >> name;
-                    cout << "Enter the value of the entry: " << endl;
+                    // count multiples
+//                    cout << "Enter the name of the entry you wish to find the number of multiples for: " << endl;
+                    // set blank name because it's not being used, but it's necessary to creat the node
+                    name = "";
+                    cout << "Enter the value of the entry you wish to find the number of multiples for: " << endl;
                     cin >> value;
 
                     newData = new Data(value, name);
@@ -759,26 +793,31 @@ int main() {
                         cout << "There were " << multipleCount << " multiples of the entry you provided." << endl;
                     }
                     ll1->printList();
-
+                    cout << endl;
                     break;
                 case 12:
                     // delete multiples
                     ll1->removeMultiples();
                     ll1->printList();
+                    cout << endl;
                     break;
                 case 13:
                     // split list and end the program
                     ll1->evenOddSplit();
                     ll1->deleteList();
 
+                    cout << "Thanks for using the Linked List Program!  Have a great Day!" << endl;
+
                     // this ends the program
                     userChoice = -1;
                     break;
                 case 14:
-                    cout << "Have a great day!" << endl;
+                    cout << "Thanks for using the Linked List Program!  Have a great day!" << endl;
+
+                    // this ends the program
                     userChoice = -1;
                 default:
-                    cout << "Invalid choice, please enter a number from 1 to 13." << endl;
+                    cout << "Invalid choice, please enter a number from 1 to 13.  Unless you want to quit, then enter 14.." << endl;
 
             }
         }
