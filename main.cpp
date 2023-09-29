@@ -450,7 +450,9 @@ public:
             current = current->next;
             delete temp;
         }
+        cout << "Even indices:" << endl;
         evenList->printList();
+        cout << "Odd indices:" << endl;
         oddList->printList();
     }
 
@@ -680,13 +682,13 @@ int main() {
                     // delete original list
                     ll1->deleteList();
 
-                    cout << "Thanks for using the Linked List Program!  Have a great Day!" << endl;
+                    cout << "Thanks for using the Doubly-Linked List Program!  Have a great Day!" << endl;
 
                     // this ends the program
                     userChoice = -1;
                     break;
                 case 14:
-                    cout << "Thanks for using the Linked List Program!  Have a great day!" << endl;
+                    cout << "Thanks for using the Doubly-Linked List Program!  Have a great day!" << endl;
 
                     // this ends the program
                     userChoice = -1;
