@@ -161,16 +161,17 @@ public:
             return true;
         }
         Node<T> *newNode = new Node<T>(value);
-        Node<T> *prev1 = get(index - 1);
-        Node<T> *next1 = prev1->next;
-        newNode->prev = prev1;
-        newNode->next = next1;
-        prev1->next = newNode;
-        next1->prev = newNode;
+        Node<T> *prevNode = get(index - 1);
+        Node<T> *nextNode = prevNode->next;
+        newNode->prev = prevNode;
+        newNode->next = nextNode;
+        prevNode->next = newNode;
+        nextNode->prev = newNode;
         length++;
         return true;
     }
 
+    // delete at head
     void deleteAtHead() {
         if (length == 0) {
             cout << "The list is empty, nothing can be deleted." << endl;
@@ -182,7 +183,7 @@ public:
             head = nullptr;
             tail = nullptr;
         } else {
-            // update head reference to 'delete' head node
+            // update head reference to remove the node from the list
             head = head->next;
             head->prev = nullptr;
         }
@@ -192,6 +193,7 @@ public:
         length--;
     }
 
+    // delete at tail
     void deleteAtTail() {
         if (length == 0) {
             // if the list is empty, nothing can be deleted
@@ -203,7 +205,7 @@ public:
             head = nullptr;
             tail = nullptr;
         } else {
-            // update tail pointer to 'delete' tail node
+            // update tail pointer to remove the node from the list
             tail = temp->prev;
             // set the tail's next pointer to nullptr, ending the list
             tail->next = nullptr;
@@ -214,10 +216,12 @@ public:
         delete temp;
     }
 
+    // delete at index
     void deleteAtIndex(int index) {
         // check if index is within the bounds of the list
         if (index < 0 || index >= length) {
             // if index is out of bounds, do not delete anything
+            cout << "Invalid node index, please try again." << endl;
             return;
         }
         Node<T> *nodeToDelete = get(index);
@@ -228,7 +232,7 @@ public:
             deleteAtTail();
             return;
         } else {
-            // update nodeToDelete's previous and next pointers, deleting the node at index
+            // update nodeToDelete's previous and next pointers to remove the node from the list
             nodeToDelete->prev->next = nodeToDelete->next;
             nodeToDelete->next->prev = nodeToDelete->prev;
         }
@@ -236,6 +240,7 @@ public:
         delete nodeToDelete;
     }
 
+    // delete list
     void deleteList() {
         Node<T> *current = head;
 
@@ -253,10 +258,7 @@ public:
             }
             delete temp;
             --length;
-
         }
-
-
     }
 
     // sortList helper function
@@ -264,7 +266,8 @@ public:
         Node<T> *firstNodePrev = firstNode->prev;
         Node<T> *secondNodeNext = secondNode->next;
 
-        // if firstNode is not head node, make its next pointer point to the second node
+        // If firstNode is not head node, make its next pointer point to the second node
+        // Otherwise, if firstNode is the head node, update the head to point to the second node.
         if (firstNodePrev != nullptr) {
             firstNodePrev->next = secondNode;
         // if firstNode is head node, make the head point to the second node
@@ -272,7 +275,8 @@ public:
             head = secondNode;
         }
 
-        // if secondNode is not the tail, make its previous pointer point to the first node
+        // If secondNode is not the tail, make its previous pointer point to the first node
+        // Otherwise, if secondNode is the tail node, update the tail to point to the first node.
         if (secondNodeNext != nullptr) {
             secondNodeNext->prev = firstNode;
         // if secondNode is the tail, make the tail point to the first node
@@ -280,14 +284,14 @@ public:
             tail = firstNode;
         }
 
-        // swap firstNode and secondNode
+        // Update the next and previous pointers of firstNode and secondNode to complete the swap.
         firstNode->next = secondNode->next;
         secondNode->prev = firstNode->prev;
         firstNode->prev = secondNode;
         secondNode->next = firstNode;
     }
 
-    // using bubble sort algorithm, O(n^2)
+    // sort list
     void sortList() {
         for (int i = 0; i < length; ++i) {
             Node<T> *currentNode = head;
@@ -298,16 +302,16 @@ public:
             for (int j = 0; j < length - i - 1; ++j) {
                 if (currentNode->value->value > nextNode->value->value) {
                     swapNodes(currentNode, nextNode);
+                // if a swap was not necessary, move on to check the next node
                 } else {
                     currentNode = nextNode;
                 }
                 nextNode = currentNode->next;
             }
         }
-
     }
 
-    // big-O O(n^2) due to nested while loops
+    // remove multiples
     void removeMultiples() {
         // set the key to the head of the list
         Node<T> *key = head;
@@ -317,11 +321,11 @@ public:
         Node<T> *nextCurrent;
         // node to hold the position of the next key in case a multiple is found and deleteAtIndex is called
         Node<T> *nextKey;
-        // keep track of the index of the key
+        // to keep track of the index of the key
         int keyIndex = 0;
-        // keep track of the index of the current node
+        // to keep track of the index of the current node
         int currentIndex;
-        // keep track of multiples found
+        // to keep track of multiples found
         int multipleCount;
 
         while (key != nullptr) {
@@ -329,7 +333,7 @@ public:
             multipleCount = 1;
             // set current node to the node after the key
             current = key->next;
-            // keep track of the index of the current node
+            // keep track of the index of the current node, will always be at least one greater than the key index
             currentIndex = keyIndex + 1;
 
             while (current != nullptr) {
@@ -353,16 +357,15 @@ public:
             if (multipleCount > 1) {
                 deleteAtIndex(keyIndex);
             } else {
-                // if a multiple was not found, the key index will need to be incremented
+                // if a multiple was not found, the key index needs to be incremented to properly keep track of the key index
                 ++keyIndex;
             }
             // after checking all the nodes for a multiple of key, move to the next node and repeat
             key = nextKey;
         }
-
-
     }
 
+    // misinterpreted remove multiples
     void removeDuplicates() {
         // make the head node the first duplicateKey to check against other nodes
         Node<T> *duplicateKey = head;
@@ -409,7 +412,8 @@ public:
         }
     }
 
-    int countMultiples(T *value) {
+    // count multiples
+    void countMultiples(T *value) {
         Node<T> *current = head;
         Data *userVal = value;
         int count = 0;
@@ -421,9 +425,20 @@ public:
             }
             current = current->next;
         }
-        return count;
+        if (count == 1) {
+            cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
+            cout << "There was " << count << " multiple of " << userVal->value << " in the list" << endl;
+//            cout << "There was " << count << " multiple of the entry you provided." << endl;
+            cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
+        } else {
+            cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
+            cout << "There were " << count << " multiples of " << userVal->value << " in the list" << endl;
+//            cout << "There were " << count << " multiples of the entry you provided." << endl;
+            cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
+        }
     }
 
+    // split list, even odd split
     void evenOddSplit() {
         DoubleLinkedList<T> *evenList = new DoubleLinkedList<Data>();
         DoubleLinkedList<T> *oddList = new DoubleLinkedList<Data>();
@@ -456,9 +471,10 @@ public:
         oddList->printList();
     }
 
+    // reverse list
     void reverseList() {
         Node<T> *current = head;
-        Node<T> *temp = nullptr;
+        Node<T> *temp;
         tail = head;
 
         while (current != nullptr) {
@@ -471,6 +487,36 @@ public:
             head = temp->prev;
         }
 
+    }
+
+    void createList() {
+        string name;
+        int value;
+        char keepAdding;
+        Data *newData;
+        DoubleLinkedList<Data> *ll1;
+
+        cout << "Enter the name and value of the first node, separated by a space: " << endl;
+        cin >> name;
+        cin >> value;
+
+        newData = new Data(value, name);
+        ll1 = new DoubleLinkedList<Data>(newData);
+
+        keepAdding = 'y';
+        while (keepAdding == 'y' || keepAdding == 'Y') {
+            cout << "Add another node? y/n: " << endl;
+            cin >> keepAdding;
+
+            if (keepAdding == 'y' || keepAdding == 'Y') {
+                cout << "Enter the name and value of the next node you want to add: " << endl;
+                cin >> name;
+                cin >> value;
+
+                newData = new Data(value, name);
+                ll1->append(newData);
+            }
+        }
     }
 
     void autoCreateList() {
@@ -510,31 +556,21 @@ int main() {
 
     // for insert functions
     Data *newData;
-    Node<Data> *newNode;
     string name;
     int value;
     int index;
 
-    // for multiple count
-    int multipleCount;
-
-
     cout << "\nHello!  Welcome to the Doubly-Linked List Program!\n" << endl;
     cout << "This program was written by Robert Ashe in CS210: Data Stuctures,\nunder the instruction of Professor Manju Muralidharan." << endl;
-    cout << "\nTo start, enter a positive number: " << endl;
+    cout << "\nTo navigate to the main menu, enter a positive number: " << endl;
 
     cin >> userChoice;
-    cin >> input;
-
-    if (input != "q") {
-        cout << "This is the Main Menu:" << endl;
-    } else {
-        cout << "Goodbye!" << endl;
-    }
 
     while (userChoice > 0) {
         // main menu
-        cout << "Choose any of the options by entering the number next to it: \n" << endl;
+        cout << "Main Menu" << endl;
+        cout << "Choose any of the options by entering the number next to it: " << endl;
+        cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << endl;
 
         cout << "1: Create a list." << endl;
         cout << "2: Delete a list" << endl;
@@ -551,11 +587,14 @@ int main() {
         cout << "13: Split the list by even and odd indices. Also quits program. (Split List)" << endl;
         cout << "14: Quit." << endl;
 
+        cout << "***************************************************************************" << endl;
+
         cin >> userChoice;
 
         if (userChoice > 0) {
             switch (userChoice) {
                 case 1: // Create new list
+
                     cout << "Enter the name and value of the first node, separated by a space: " << endl;
                     cin >> name;
                     cin >> value;
@@ -569,7 +608,7 @@ int main() {
                         cin >> keepAdding;
 
                         if (keepAdding == 'y' || keepAdding == 'Y') {
-                            cout << "Enter the name and value of the next node you want to add: " << endl;
+                            cout << "Enter the name and value of the next node you want to add, separated by a space: " << endl;
                             cin >> name;
                             cin >> value;
 
@@ -584,6 +623,11 @@ int main() {
                     // Delete a list
                     ll1->deleteList();
 
+                    // no existing list to print, but helpful if user knows that the list is empty
+                    cout << "Current contents of list:\nList is empty" << endl;
+
+                    // this ends the program
+                    userChoice = -1;
                     break;
                 case 3:
                     // insert at head
@@ -655,18 +699,14 @@ int main() {
                     break;
                 case 11:
                     // count multiples
-                    // set blank name because it's not being used, but it's necessary to create the node
+                    // set name to an empty string because it's not being used, but it's necessary to create the node
                     name = "";
                     cout << "Enter the value of the entry you wish to find the number of multiples for: " << endl;
                     cin >> value;
 
                     newData = new Data(value, name);
-                    multipleCount = ll1->countMultiples(newData);
-                    if (multipleCount == 1) {
-                        cout << "There was " << multipleCount << " multiple of the entry you provided." << endl;
-                    } else {
-                        cout << "There were " << multipleCount << " multiples of the entry you provided." << endl;
-                    }
+                    ll1->countMultiples(newData);
+
                     ll1->printList();
                     cout << endl;
                     break;
@@ -694,9 +734,9 @@ int main() {
                     userChoice = -1;
                 default:
                     cout << "Invalid choice, please enter a number from 1 to 13.  Unless you want to quit, then enter 14.." << endl;
-
             }
         }
+        cout << "***************************************************************************" << endl;
     }
     return 0;
 }
