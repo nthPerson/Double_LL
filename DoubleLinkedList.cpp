@@ -3,7 +3,6 @@
 
 using namespace std;
 
-// Data Class : Holds all the data that goes inside the Node
 class Data {
 public:
     int value;
@@ -17,6 +16,15 @@ public:
     void print() {
         cout << name << ", " << value << endl;
     }
+
+    bool isGreaterThan(const Data& otherData) {
+        return this->value > otherData.value;
+    }
+
+    bool isEqualTo(const Data &otherData) {
+        return (this->value == otherData.value) || (this->name == otherData.name) ;
+    }
+
 };
 
 template<typename T>
@@ -35,6 +43,8 @@ public:
     void print() {
         value->print();
     }
+
+
 };
 
 template<typename T>
@@ -75,6 +85,27 @@ public:
             temp->print();
             temp = temp->next;
         }
+    }
+
+    bool compareGreaterThan(Node<T> *node1, Node<T> *node2) {
+        if (node1 == nullptr || node2 == nullptr) {
+            return false;
+        } else if (node1->value == nullptr || node2->value == nullptr) {
+            return false;
+        }
+        // if node1 and node2 have valid data
+        return node1->value->isGreaterThan(*node2->value);
+    }
+
+    bool compareEqualTo(Node<T> *node1, Node<T> *node2) {
+        // (node1 == nullptr || node2 == nullptr)
+        if (node1 == nullptr || node2 == nullptr) {
+            return false;
+        } else if (node1->value == nullptr || node2->value == nullptr) {
+            return false;
+        }
+        // if node1 and node2 have valid data
+        return (node1->value->isEqualTo(*node2->value));
     }
 
     Node<T> *getHead() {
@@ -118,7 +149,6 @@ public:
         }
         return false;
     }
-
 
     // insert at tail
     void append(T *value) {
@@ -300,9 +330,9 @@ public:
             // this loop runs for the unsorted part of the list,
             // aka the remaining number of iterations of the first loop
             for (int j = 0; j < length - i - 1; ++j) {
-                if (currentNode->value->value > nextNode->value->value) {
+                if (compareGreaterThan(currentNode, nextNode)) {
                     swapNodes(currentNode, nextNode);
-                // if a swap was not necessary, move on to check the next node
+                    // if a swap was not necessary, move on to check the next node
                 } else {
                     currentNode = nextNode;
                 }
@@ -337,7 +367,7 @@ public:
             currentIndex = keyIndex + 1;
 
             while (current != nullptr) {
-                if ((key->value->value == current->value->value) || (key->value->name == current->value->name)) {
+                if (compareEqualTo(key, current)) {
                     ++multipleCount;
                     // keep track of node after current because it would be lost if delete at index was called without it
                     nextCurrent = current->next;
@@ -349,7 +379,6 @@ public:
                     current = current->next;
                     ++currentIndex;
                 }
-
             }
             // save the next key in case a multiple of the key was found, so it can be deleted
             nextKey = key->next;
@@ -380,7 +409,7 @@ public:
             while (current != nullptr) {
 
                 // check if the values match
-                if (duplicateKey->value->value == current->value->value) {
+                if (compareEqualTo(duplicateKey, current)) {
 
                     // if the values match, create a temp pointer for the node to be deleted from list
                     // this ensures the node to be deleted is kept track of, so it can be deleted successfully
@@ -412,30 +441,22 @@ public:
         }
     }
 
-    // count multiples
-    void countMultiples(T *value) {
+    int countMultiples(T *value) { // rewrite using compare
         Node<T> *current = head;
-        Data *userVal = value;
+//        Node<T> *value = new Node<T>(value);
         int count = 0;
 
+        if (value == nullptr) {
+            cout << "Invalid value" << endl;
+            return -1;
+        }
         while (current != nullptr) {
-
-            if (current->value->value == userVal->value) {
+            if (compareEqualTo(current, new Node<T>(value))) {
                 ++count;
             }
             current = current->next;
         }
-        if (count == 1) {
-            cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
-            cout << "There was " << count << " multiple of " << userVal->value << " in the list" << endl;
-//            cout << "There was " << count << " multiple of the entry you provided." << endl;
-            cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
-        } else {
-            cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
-            cout << "There were " << count << " multiples of " << userVal->value << " in the list" << endl;
-//            cout << "There were " << count << " multiples of the entry you provided." << endl;
-            cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
-        }
+        return count;
     }
 
     // split list, even odd split
@@ -486,7 +507,6 @@ public:
         if (temp != nullptr) {
             head = temp->prev;
         }
-
     }
 
     void createList() {
@@ -542,7 +562,6 @@ public:
 
 };
 
-
 int main() {
     // for menu functions
     string input;
@@ -559,6 +578,7 @@ int main() {
     string name;
     int value;
     int index;
+    int count;
 
     cout << "\nHello!  Welcome to the Doubly-Linked List Program!\n" << endl;
     cout << "This program was written by Robert Ashe in CS210: Data Stuctures,\nunder the instruction of Professor Manju Muralidharan." << endl;
@@ -699,13 +719,22 @@ int main() {
                     break;
                 case 11:
                     // count multiples
-                    // set name to an empty string because it's not being used, but it's necessary to create the node
                     name = "";
                     cout << "Enter the value of the entry you wish to find the number of multiples for: " << endl;
                     cin >> value;
 
                     newData = new Data(value, name);
-                    ll1->countMultiples(newData);
+                    count = ll1->countMultiples(newData);
+
+                    if (count == 1) {
+                        cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
+                        cout << "There was " << count << " multiple of " << value << " in the list" << endl;
+                        cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
+                    } else {
+                        cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
+                        cout << "There were " << count << " multiples of " << value << " in the list" << endl;
+                        cout << "*    *    *    *    *    *    *    *    *    *    *" << endl;
+                    }
 
                     ll1->printList();
                     cout << endl;
